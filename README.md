@@ -28,16 +28,6 @@ As implemented, it gets employees from one instance of Workday and one instance 
 
 Simple steps to get Workday to ServiceNow employee Aggregation running 
 
-In any of the ways you would like to run this Anypoint Template, here is an example of the output you'll see after hitting the HTTP endpoint:
-
-TODO
-<pre>
-<h1>Batch Process initiated</h1>
-<b>ID:</b>6eea3cc6-7c96-11e3-9a65-55f9f3ae584e<br/>
-<b>Records to Be Processed: </b>9<br/>
-<b>Start execution on: </b>Mon Jan 13 18:05:33 GMT-03:00 2014
-</pre>
-
 ## Running on premise <a name="runonopremise"/>
 
 In this section we detail the way you have to run you Anypoint Temple on you computer.

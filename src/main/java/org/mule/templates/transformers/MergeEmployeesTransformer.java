@@ -18,10 +18,10 @@ import com.google.common.collect.Lists;
  * 
  * @author cesar.garcia
  */
-public class ContactMerger extends AbstractMessageTransformer {
+public class MergeEmployeesTransformer extends AbstractMessageTransformer {
 
-	private static final String QUERY_COMPANY_A = "contactsFromOrgA";
-	private static final String QUERY_COMPANY_B = "contactsFromOrgB";
+	private static final String QUERY_COMPANY_A = "employeesFromOrgA";
+	private static final String QUERY_COMPANY_B = "employeesFromOrgB";
 
 	@Override
 	public Object transformMessage(MuleMessage message, String outputEncoding) throws TransformerException {

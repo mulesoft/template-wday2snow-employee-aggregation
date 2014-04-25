@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:json="http://www.mulesoft.org/schema/mule/json"
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:json="http://www.mulesoft.org/schema/mule/json"
 	xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
 	xmlns:data-mapper="http://www.mulesoft.org/schema/mule/ee/data-mapper"
 	xmlns:servicenow="http://www.mulesoft.org/schema/mule/servicenow"
@@ -15,7 +15,8 @@ http://www.mulesoft.org/schema/mule/servicenow http://www.mulesoft.org/schema/mu
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
-http://www.mulesoft.org/schema/mule/wd-hr http://www.mulesoft.org/schema/mule/wd-hr/2.0/mule-wd-hr.xsd">
+http://www.mulesoft.org/schema/mule/wd-hr http://www.mulesoft.org/schema/mule/wd-hr/2.0/mule-wd-hr.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
 
 
 	<data-mapper:config name="map_to_csv" transformationGraphPath="map_to_csv.grf" doc:name="map_to_csv" />
@@ -35,17 +36,19 @@ This flow should control the direction of the application, and it should be call
 	</flow>
 
 	<sub-flow name="gatherDataFlow" doc:name="gatherDataFlow">
-		<enricher source="#[payload]" target="#[flowVars['contactsFromOrgA']]"
-			doc:name="Store result in FlowVar 'contactsFromOrgA'">
+		<enricher source="#[payload]" target="#[flowVars['employeesFromOrgA']]"
+			doc:name="Store result in FlowVar 'employeesFromOrgA'">
             <processor-chain doc:name="Processor Chain">
-                <wd-hr:get-workers config-ref="Workday_Human_Resource" workersRequest-ref="#[org.mule.kicks.WorkersRequest.create()]" doc:name="get Workers from Employees Human Resource"/>
+                <wd-hr:get-workers config-ref="Workday_Human_Resource" workersRequest-ref="#[new com.workday.hr.GetWorkersRequestType()]" doc:name="get Workers from Employees Human Resource"/>
                 <data-mapper:transform config-ref="workdayWorkers_to_maps" doc:name="Workday Workers to Maps"/>
             </processor-chain>
 		</enricher>
-		<enricher source="#[payload]" target="#[flowVars['contactsFromOrgB']]"
-			doc:name="Store result in FlowVar 'contactsFromOrgB'">
+		<enricher source="#[payload]" target="#[flowVars['employeesFromOrgB']]"
+			doc:name="Store result in FlowVar 'employeesFromOrgB'">
             <processor-chain doc:name="Processor Chain">
-                <custom-transformer class="org.mule.kicks.CreateGetRecords" doc:name="prepare query for deciding the upsert operation"/>
+                <scripting:component doc:name="Groovy">
+                    <scripting:script engine="Groovy"><![CDATA[new com.servicenow.sysuser.GetRecords()]]></scripting:script>
+                </scripting:component>
                 <servicenow:get-user-records config-ref="ServiceNow" doc:name="get Users from ServiceNow"/>
                 <data-mapper:transform config-ref="servicenowUsers_to_maps" doc:name="ServiceNow users to Maps"/>
             </processor-chain>
@@ -53,13 +56,13 @@ This flow should control the direction of the application, and it should be call
 	</sub-flow>
 
 	<sub-flow name="aggregationFlow" doc:name="aggregationFlow">
-		<custom-transformer class="org.mule.templates.transformers.ContactMerger"
-			doc:name="Custom component to build merged contacts list" />
+		<custom-transformer class="org.mule.templates.transformers.MergeEmployeesTransformer"
+			doc:name="Custom component to build merged employees list" />
 	</sub-flow>
 
 	<sub-flow name="formatOutputFlow" doc:name="formatOutputFlow">
-		<custom-transformer class="org.mule.templates.transformers.SortContactList"
-			doc:name="Custom component to sort contact list" />
+		<custom-transformer class="org.mule.templates.transformers.SortEmployeesTransformer"
+			doc:name="Custom component to sort employee list" />
 		<data-mapper:transform config-ref="map_to_csv"
 			doc:name="transform Collection of Maps to CSV Format" />
 

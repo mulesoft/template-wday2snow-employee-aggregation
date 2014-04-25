@@ -17,7 +17,7 @@ import org.mule.transformer.AbstractMessageTransformer;
  * 
  * @author
  */
-public class SortContactList extends AbstractMessageTransformer {
+public class SortEmployeesTransformer extends AbstractMessageTransformer {
 
 	public static Comparator<Map<String, String>> recordComparator = new Comparator<Map<String, String>>() {
 
