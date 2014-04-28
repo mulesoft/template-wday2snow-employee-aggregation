@@ -46,10 +46,7 @@ This flow should control the direction of the application, and it should be call
 		<enricher source="#[payload]" target="#[flowVars['employeesFromOrgB']]"
 			doc:name="Store result in FlowVar 'employeesFromOrgB'">
             <processor-chain doc:name="Processor Chain">
-                <scripting:component doc:name="Groovy">
-                    <scripting:script engine="Groovy"><![CDATA[new com.servicenow.sysuser.GetRecords()]]></scripting:script>
-                </scripting:component>
-                <servicenow:get-user-records config-ref="ServiceNow" doc:name="get Users from ServiceNow"/>
+                <servicenow:get-user-records config-ref="ServiceNow" doc:name="get Users from ServiceNow" getUserRecordsRequest-ref="#[new com.servicenow.sysuser.GetRecords()]"/>
                 <data-mapper:transform config-ref="servicenowUsers_to_maps" doc:name="ServiceNow users to Maps"/>
             </processor-chain>
 		</enricher>
