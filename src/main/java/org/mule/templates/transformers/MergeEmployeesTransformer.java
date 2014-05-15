@@ -2,15 +2,12 @@ package org.mule.templates.transformers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.mule.api.MuleMessage;
 import org.mule.api.transformer.TransformerException;
 import org.mule.transformer.AbstractMessageTransformer;
-
-import com.google.common.collect.Lists;
 
 /**
  * This transformer will take to list as input and create a third one that will be the merge of the previous two. The identity of an element of the list is
