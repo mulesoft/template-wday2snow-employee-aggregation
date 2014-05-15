@@ -1,7 +1,6 @@
 # Mule Anypoint Template: Workday to ServiceNow Employee agregation
 
-FIXME All the following text must be updated!!!
-
++ [License Agreement](#licenseagreement)
 + [Use Case](#usecase)
 + [Run it!](#runit)
     * [Running on premise](#runonopremise)
@@ -14,6 +13,9 @@ FIXME All the following text must be updated!!!
     * [errorHandling.xml](#errorhandlingxml)
 + [Testing the Template](#testingthetemplate)
     
+# License Agreement <a name="licenseagreement"/>
+Note that using this template is subject to the conditions of this [License Agreement](AnypointTemplateLicense.pdf).
+Please review the terms of the license before downloading and using this template. In short, you are allowed to use the template for free with Mule ESB Enterprise Edition, CloudHub, or as a trial in Anypoint Studio.
 
 # Use Case <a name="usecase"/>
 I want to aggregate employees from Workday and ServiceNow Instances and compare them to see which employees can only be found in one of the two and which employees are in both instances. 
@@ -43,7 +45,7 @@ Once you have imported you Anypoint Template into Anypoint Studio you need to fo
 
 
 ### Running on Mule ESB stand alone <a name="runonmuleesbstandalone"/> 
-Complete all properties in one of the property files, for example in [mule.prod.properties] (../blob/master/src/main/resources/mule.prod.properties) and run your app with the corresponding environment variable to use it. To follow the example, this will be `mule.env=prod`.
+Complete all properties in one of the property files, for example in [mule.prod.properties](../blob/master/src/main/resources/mule.prod.properties) and run your app with the corresponding environment variable to use it. To follow the example, this will be `mule.env=prod`.
 
 ## Running on CloudHub <a name="runoncloudhub"/>
 
@@ -56,7 +58,7 @@ Anypoint Studio provides you with really easy way to deploy your Template direct
 
 
 ## Running on premise <a name="runonopremise"/>
-Complete all properties in one of the property files, for example in [mule.prod.properties] (../blob/master/src/main/resources/mule.prod.properties) and run your app with the corresponding environment variable to use it. To follow the example, this will be `mule.env=prod`.
+Complete all properties in one of the property files, for example in [mule.prod.properties](../blob/master/src/main/resources/mule.prod.properties) and run your app with the corresponding environment variable to use it. To follow the example, this will be `mule.env=prod`.
 
 After this, to trigger the use case you just need to hit the local HTTP endpoint with the port you configured in your file. If this is, for instance, `9090` then you should hit: `http://localhost:9090/generatereport` and this will create a CSV report and send it to the mails set.
 
@@ -156,7 +158,7 @@ If you want to change this order then the *compare* method should be modified.
 
 
 ## errorHandling.xml<a name="errorhandlingxml"/>
-Contains a [Catch Exception Strategy](http://www.mulesoft.org/documentation/display/current/Catch+Exception+Strategy) that is only Logging the exception thrown (If so). As you imagine, this is the right place to handle how your integration will react depending on the different exceptions. 
+Contains a [Catch Exception Strategy](http://www.mulesoft.org/documentation/display/current/Catch+Exception+Strategy) that is only Logging the exception thrown (if so). As you imagine, this is the right place to handle how your integration will react depending on the different exceptions. 
 
 ## Testing the Template <a name="testingthetemplate"/>
 
