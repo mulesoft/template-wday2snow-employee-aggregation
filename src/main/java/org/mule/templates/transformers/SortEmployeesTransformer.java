@@ -21,35 +21,35 @@ public class SortEmployeesTransformer extends AbstractMessageTransformer {
 
 	public static Comparator<Map<String, String>> recordComparator = new Comparator<Map<String, String>>() {
 
-		public int compare(Map<String, String> contact1, Map<String, String> contact2) {
+		public int compare(Map<String, String> employee1, Map<String, String> employee2) {
 
-			String key1 = buildKey(contact1);
-			String key2 = buildKey(contact2);
+			String key1 = buildKey(employee1);
+			String key2 = buildKey(employee2);
 
 			return key1.compareTo(key2);
 
 		}
 
-		private String buildKey(Map<String, String> contact) {
+		private String buildKey(Map<String, String> employee) {
 			StringBuilder key = new StringBuilder();
 
-			if (StringUtils.isNotBlank(contact.get("IDInA")) && StringUtils.isNotBlank(contact.get("IDInB"))) {
+			if (StringUtils.isNotBlank(employee.get("IDInA")) && StringUtils.isNotBlank(employee.get("IDInB"))) {
 				key.append("~~");
-				key.append(contact.get("IDInA"));
-				key.append(contact.get("IDInB"));
-				key.append(contact.get("Email"));
+				key.append(employee.get("IDInA"));
+				key.append(employee.get("IDInB"));
+				key.append(employee.get("Email"));
 			}
 
-			if (StringUtils.isNotBlank(contact.get("IDInA")) && StringUtils.isBlank(contact.get("IDInB"))) {
-				key.append(contact.get("IDInA"));
+			if (StringUtils.isNotBlank(employee.get("IDInA")) && StringUtils.isBlank(employee.get("IDInB"))) {
+				key.append(employee.get("IDInA"));
 				key.append("~");
-				key.append(contact.get("Email"));
+				key.append(employee.get("Email"));
 			}
 
-			if (StringUtils.isBlank(contact.get("IDInA")) && StringUtils.isNotBlank(contact.get("IDInB"))) {
+			if (StringUtils.isBlank(employee.get("IDInA")) && StringUtils.isNotBlank(employee.get("IDInB"))) {
 				key.append("~");
-				key.append(contact.get("IDInB"));
-				key.append(contact.get("Email"));
+				key.append(employee.get("IDInB"));
+				key.append(employee.get("Email"));
 			}
 
 			return key.toString();
@@ -61,11 +61,11 @@ public class SortEmployeesTransformer extends AbstractMessageTransformer {
 	@Override
 	public Object transformMessage(MuleMessage message, String outputEncoding) throws TransformerException {
 
-		List<Map<String, String>> sortedContactsList = (List<Map<String, String>>) message.getPayload();
+		List<Map<String, String>> sortedemployeesList = (List<Map<String, String>>) message.getPayload();
 
-		Collections.sort(sortedContactsList, recordComparator);
+		Collections.sort(sortedemployeesList, recordComparator);
 
-		return sortedContactsList;
+		return sortedemployeesList;
 
 	}
 

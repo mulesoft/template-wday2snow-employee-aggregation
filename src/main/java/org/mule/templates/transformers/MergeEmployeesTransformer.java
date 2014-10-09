@@ -23,63 +23,63 @@ public class MergeEmployeesTransformer extends AbstractMessageTransformer {
 	@Override
 	public Object transformMessage(MuleMessage message, String outputEncoding) throws TransformerException {
 
-		List<Map<String, String>> mergedContactList = mergeList(getContactsList(message, QUERY_COMPANY_A), getContactsList(message, QUERY_COMPANY_B));
+		List<Map<String, String>> mergedEmployeeList = mergeList(getEmployeessList(message, QUERY_COMPANY_A), getEmployeessList(message, QUERY_COMPANY_B));
 
-		return mergedContactList;
+		return mergedEmployeeList;
 	}
 
-	private List<Map<String, String>> getContactsList(MuleMessage message, String propertyName) {
+	private List<Map<String, String>> getEmployeessList(MuleMessage message, String propertyName) {
 		return message.<List<Map<String, String>>>getInvocationProperty(propertyName);
 	}
 
 	/**
 	 * The method will merge the accounts from the two lists creating a new one.
 	 * 
-	 * @param contactsFromOrgA
-	 *            contacts from organization A
-	 * @param contactsFromOrgB
-	 *            contacts from organization B
+	 * @param employeesFromOrgA
+	 *            employees from organization A
+	 * @param employeesFromOrgB
+	 *            employees from organization B
 	 * @return a list with the merged content of the to input lists
 	 */
-	private List<Map<String, String>> mergeList(List<Map<String, String>> contactsFromOrgA, List<Map<String, String>> contactsFromOrgB) {
-		List<Map<String, String>> mergedContactsList = new ArrayList<Map<String, String>>();
+	private List<Map<String, String>> mergeList(List<Map<String, String>> employeesFromOrgA, List<Map<String, String>> employeesFromOrgB) {
+		List<Map<String, String>> mergedEmployeesList = new ArrayList<Map<String, String>>();
 
-		// Put all contacts from A in the merged mergedContactsList
-		for (Map<String, String> contactFromA : contactsFromOrgA) {
-			Map<String, String> mergedContact = createMergedContact(contactFromA);
-			mergedContact.put("IDInA", contactFromA.get("Id"));
-			mergedContactsList.add(mergedContact);
+		// Put all employees from A in the merged mergedEmployeeList
+		for (Map<String, String> employeeFromA : employeesFromOrgA) {
+			Map<String, String> mergedEmployee = createMergedEmployee(employeeFromA);
+			mergedEmployee.put("IDInA", employeeFromA.get("Id"));
+			mergedEmployeesList.add(mergedEmployee);
 		}
 
-		// Add the new contacts from B and update the exiting ones
-		for (Map<String, String> contactsFromB : contactsFromOrgB) {
-			Map<String, String> contactFromA = findContactInList(contactsFromB.get("Email"), mergedContactsList);
-			if (contactFromA != null) {
-				contactFromA.put("IDInB", contactsFromB.get("Id"));
+		// Add the new employees from B and update the exiting ones
+		for (Map<String, String> employeeFromB : employeesFromOrgB) {
+			Map<String, String> employeeFromA = findEmployeeInList(employeeFromB.get("Email"), mergedEmployeesList);
+			if (employeeFromA != null) {
+				employeeFromA.put("IDInB", employeeFromB.get("Id"));
 			} else {
-				Map<String, String> mergedAccount = createMergedContact(contactsFromB);
-				mergedAccount.put("IDInB", contactsFromB.get("Id"));
-				mergedContactsList.add(mergedAccount);
+				Map<String, String> mergedEmployee = createMergedEmployee(employeeFromB);
+				mergedEmployee.put("IDInB", employeeFromB.get("Id"));
+				mergedEmployeesList.add(mergedEmployee);
 			}
 
 		}
-		return mergedContactsList;
+		return mergedEmployeesList;
 	}
 
-	private Map<String, String> createMergedContact(Map<String, String> contact) {
-		Map<String, String> mergedContact = new HashMap<String, String>();
-		mergedContact.put("Name", contact.get("Name"));
-		mergedContact.put("Email", contact.get("Email"));
-		mergedContact.put("IDInA", "");
-		mergedContact.put("IDInB", "");
-		return mergedContact;
+	private Map<String, String> createMergedEmployee(Map<String, String> employee) {
+		Map<String, String> mergedEmployee = new HashMap<String, String>();
+		mergedEmployee.put("Name", employee.get("Name"));
+		mergedEmployee.put("Email", employee.get("Email"));
+		mergedEmployee.put("IDInA", "");
+		mergedEmployee.put("IDInB", "");
+		return mergedEmployee;
 	}
 
-	private Map<String, String> findContactInList(String accountName, List<Map<String, String>> orgList) {
-		for (Map<String, String> account : orgList) {
-			if (account.get("Email")
-						.equals(accountName)) {
-				return account;
+	private Map<String, String> findEmployeeInList(String employeeName, List<Map<String, String>> orgList) {
+		for (Map<String, String> emp : orgList) {
+			if (emp.get("Email")
+						.equals(employeeName)) {
+				return emp;
 			}
 		}
 		return null;

@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<configuration>
+	<placeholders>
+		<placeholder id="template_name">Workday to Service Now Employee Aggregation</placeholder>
+	</placeholders>
+	<sections>
+		<section id="use_case">
+I want to aggregate employees from Workday and ServiceNow Instances and compare them to see which employees can only be found in one of the two and which employees are in both instances. 
+
+For practical purposes this Template will generate the result in the format of a CSV Report sent by email.
+
+This Template should serve as a foundation for extracting data from two systems, aggregating data, comparing values of fields for the objects, and generating a report on the differences. 
+
+As implemented, it gets employees from one instance of Workday and one instance of ServiceNow, compares by the email address of the employees, and generates a CSV file which shows employee in A (WorkDay), employee in B (ServiceNow), and employees in A and B. The report is then e-mailed to the configured e-mail address.		</section>
+		<section id="considerations">
+<![CDATA[
+To make this Anypoint Template run, there are certain preconditions that must be considered. All of them deal with the preparations in both, that must be made in order for all to run smoothly. **Failling to do so could lead to unexpected behavior of the template.**
+]]>
+		</section>
+		
+		<section id="running_on_cloudhub">
+<![CDATA[
+Once your app is all set and started, supposing you choose as domain name `wday2snowemployeeaggregation` to trigger the use case you just need to hit `http://wday2snowemployeeaggregation.cloudhub.io/generatereport` and the report will be sent to the e-mails configured.
+]]>
+		</section>
+		<section id="default_running_on_premise">
+<![CDATA[
+Complete all properties in one of the property files, for example in [mule.prod.properties] (../blob/master/src/main/resources/mule.prod.properties) and run your app with the corresponding environment variable to use it. To follow the example, this will be `mule.env=prod`.
+
+After this, to trigger the use case you just need to hit the local http endpoint with the port you configured in your file. If this is, for instance, `9090` then you should hit: `http://localhost:9090/generatereport` and this will create a CSV report and send it to the mail set.
+]]>
+		</section>
+		<section id="application_configuration">
+		<![CDATA[
++ http.port `9090` 
+
+# Properties to be used on the development environment
+
+#### WorkDay Connector configuration
++ wday.user `user@mulesoft`
++ wday.password `secret`
++ wday.endpoint `https://impl-cc.workday.com/ccx/service/mulesoft/Human_Resources/v21.1`
+
+#### ServiceNow Connector configuration
++ snow.user `mule.snow`
++ snow.password `secret`
++ snow.endpoint `https://dev107.service-now.com`
+
+#### SMPT Services configuration
++ smtp.host `smtp.gmail.com`
++ smtp.port `587`
++ smtp.user `exampleuser@gmail.com`
++ smtp.password `ExamplePassword456`
+
+#### Mail details
++ mail.from `exampleuser@gmail.com`
++ mail.to `woody.guthrie@gmail.com`
++ mail.subject `Employee migration Report`
++ mail.body `Employee migration report`
++ attachment.name `EmployeeReport.csv`
+]]>
+		</section>
+		<section id="api_calls">
+			<![CDATA[There are no special considerations regarding API calls.  ]]>
+		</section>
+		<section id="default_endpoints_xml">
+		<![CDATA[
+This is the file where you will found the inbound and outbound sides of your integration app.
+This Template has an [HTTP Inbound Endpoint](http://www.mulesoft.org/documentation/display/current/HTTP+Endpoint+Reference) as the way to trigger the use case and an [SMTP Transport](http://www.mulesoft.org/documentation/display/current/SMTP+Transport+Reference) as the outbound way to send the report.
+
+###  Trigger Flow
+**HTTP Inbound Endpoint** - Start Report Generation
++ `${http.port}` is set as a property to be defined either on a property file or in CloudHub environment variables.
++ The path configured by default is `generatereport` and you are free to change for the one you prefer.
++ The host name for all endpoints in your CloudHub configuration should be defined as `localhost`. CloudHub will then route requests from your application domain URL to the endpoint.
+]]>
+		</section>
+		<section id="default_business_logic_xml">
+		<![CDATA[
+Functional aspect of the Template is implemented on this XML, directed by one flow responsible of conducting the aggregation of data, comparing records and finally formating the output, in this case being a report.
+The *mainFlow* organises the job in three different steps and finally invokes the *outboundFlow* that will deliver the report to the corresponding outbound endpoint.
+This flow has Exception Strategy that basically consists on invoking the *defaultChoiseExceptionStrategy* defined in *errorHandling.xml* file.
+
+
+###  Gather Data Flow
+Mainly consisting of two calls (Queries) to Workday and Service Now and storing each response on the Invocation Variable named *employeesFromOrgA* or *employeesFromOrgB* accordingly.
+
+###  Aggregation Flow
+[Java Transformer](http://www.mulesoft.org/documentation/display/current/Java+Transformer+Reference) responsible for aggregating the results from Workday and Service Now.
+Criteria and format applied:
++ Transformer receives a Mule Message with the two Invocation variables *employeesFromOrgA* and *employeesFromOrgB* to result in List of Maps with keys: **Name**, **Email**, **IDInA** and **IDInB**.
++ Employees will be matched by email, that is to say, a record in both systems with the same email is considered the same employee.
+
+###  Format Output Flow
++ [Java Transformer](http://www.mulesoft.org/documentation/display/current/Java+Transformer+Reference) responsible for sorting the list of employees in the following order:
+
+1. Employees only in Workday
+2. Employees only in Service Now
+3. Employees in both systems
+
+All records ordered alphabetically by email within each category.
+If you want to change this order then the *compare* method should be modified.
+
++ CSV Report [DataMapper](http://www.mulesoft.org/documentation/display/current/Datamapper+User+Guide+and+Reference) transforming the List of Maps in CSV with headers **Name**, **Email**, **IDInA**, and **IDInB**.
++ An [Object to string transformer](http://www.mulesoft.org/documentation/display/current/Transformers) is used to set the payload as an String. 
+
+###  Outbound Flow
+**SMTP Outbound Endpoint** - Send email
++ Both SMTP Server configuration and the actual email to be sent are defined in this endpoint.
++ This flow is going to be invoked from the flow that does all the functional work: *mainFlow*, the same that is invoked from the Inbound Flow upon triggering of the HTTP Endpoint.
+]]>
+		</section>
+	</sections>
+</configuration>
