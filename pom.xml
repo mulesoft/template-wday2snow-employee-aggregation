@@ -15,8 +15,8 @@
 	<name>template-wday2snow-employee-aggregation Anypoint Template Project</name>
 
 	<properties>
-		<workday.version>3.0.0</workday.version>
-		<snow.version>3.0.0</snow.version>		
+		<workday.version>4.0.0</workday.version>
+		<snow.version>4.0.0</snow.version>		
 	</properties>
 
 	<build>
