@@ -23,39 +23,39 @@ import org.mule.transformer.AbstractMessageTransformer;
  * 
  * @author
  */
-public class SortEmployeesTransformer extends AbstractMessageTransformer {
+public class SortWorkersTransformer extends AbstractMessageTransformer {
 
 	public static Comparator<Map<String, String>> recordComparator = new Comparator<Map<String, String>>() {
 
-		public int compare(Map<String, String> employee1, Map<String, String> employee2) {
+		public int compare(Map<String, String> worker1, Map<String, String> worker2) {
 
-			String key1 = buildKey(employee1);
-			String key2 = buildKey(employee2);
+			String key1 = buildKey(worker1);
+			String key2 = buildKey(worker2);
 
 			return key1.compareTo(key2);
 
 		}
 
-		private String buildKey(Map<String, String> employee) {
+		private String buildKey(Map<String, String> worker) {
 			StringBuilder key = new StringBuilder();
 
-			if (StringUtils.isNotBlank(employee.get("IDInA")) && StringUtils.isNotBlank(employee.get("IDInB"))) {
+			if (StringUtils.isNotBlank(worker.get("IDInA")) && StringUtils.isNotBlank(worker.get("IDInB"))) {
 				key.append("~~");
-				key.append(employee.get("IDInA"));
-				key.append(employee.get("IDInB"));
-				key.append(employee.get("Email"));
+				key.append(worker.get("IDInA"));
+				key.append(worker.get("IDInB"));
+				key.append(worker.get("Email"));
 			}
 
-			if (StringUtils.isNotBlank(employee.get("IDInA")) && StringUtils.isBlank(employee.get("IDInB"))) {
-				key.append(employee.get("IDInA"));
+			if (StringUtils.isNotBlank(worker.get("IDInA")) && StringUtils.isBlank(worker.get("IDInB"))) {
+				key.append(worker.get("IDInA"));
 				key.append("~");
-				key.append(employee.get("Email"));
+				key.append(worker.get("Email"));
 			}
 
-			if (StringUtils.isBlank(employee.get("IDInA")) && StringUtils.isNotBlank(employee.get("IDInB"))) {
+			if (StringUtils.isBlank(worker.get("IDInA")) && StringUtils.isNotBlank(worker.get("IDInB"))) {
 				key.append("~");
-				key.append(employee.get("IDInB"));
-				key.append(employee.get("Email"));
+				key.append(worker.get("IDInB"));
+				key.append(worker.get("Email"));
 			}
 
 			return key.toString();
@@ -67,11 +67,11 @@ public class SortEmployeesTransformer extends AbstractMessageTransformer {
 	@Override
 	public Object transformMessage(MuleMessage message, String outputEncoding) throws TransformerException {
 
-		List<Map<String, String>> sortedemployeesList = (List<Map<String, String>>) message.getPayload();
+		List<Map<String, String>> sortedList = (List<Map<String, String>>) message.getPayload();
 
-		Collections.sort(sortedemployeesList, recordComparator);
+		Collections.sort(sortedList, recordComparator);
 
-		return sortedemployeesList;
+		return sortedList;
 
 	}
 

@@ -1,5 +1,5 @@
 
-# Anypoint Template: Workday to Service Now Employee Aggregation
+# Anypoint Template: Workday to Service Now Worker Aggregation
 
 + [License Agreement](#licenseagreement)
 + [Use Case](#usecase)
@@ -26,13 +26,13 @@ Note that using this template is subject to the conditions of this [License Agre
 Please review the terms of the license before downloading and using this template. In short, you are allowed to use the template for free with Mule ESB Enterprise Edition, CloudHub, or as a trial in Anypoint Studio.
 
 # Use Case <a name="usecase"/>
-I want to aggregate employees from Workday and ServiceNow Instances and compare them to see which employees can only be found in one of the two and which employees are in both instances. 
+I want to aggregate workers from Workday and ServiceNow Instances and compare them to see which workers can only be found in one of the two and which workers are in both instances. 
 
 For practical purposes this Template will generate the result in the format of a CSV Report sent by email.
 
 This Template should serve as a foundation for extracting data from two systems, aggregating data, comparing values of fields for the objects, and generating a report on the differences. 
 
-As implemented, it gets employees from one instance of Workday and one instance of ServiceNow, compares by the email address of the employees, and generates a CSV file which shows employee in A (WorkDay), employee in B (ServiceNow), and employees in A and B. The report is then e-mailed to the configured e-mail address.
+As implemented, it gets workers from one instance of Workday and one instance of ServiceNow, compares by the email address of the workers, and generates a CSV file which shows workers in A (WorkDay), workers in B (ServiceNow), and workers in A and B. The report is then e-mailed to the configured e-mail address.
 
 # Considerations <a name="considerations"/>
 
@@ -58,7 +58,7 @@ There are no particular considerations for this Anypoint Template regarding Work
 
 
 # Run it! <a name="runit"/>
-Simple steps to get Workday to Service Now Employee Aggregation running.
+Simple steps to get Workday to Service Now Worker Aggregation running.
 
 
 ## Running on premise <a name="runonopremise"/>
@@ -101,7 +101,7 @@ Complete all properties in one of the property files, for example in [mule.prod.
 
 ## Running on CloudHub <a name="runoncloudhub"/>
 While [creating your application on CloudHub](http://www.mulesoft.org/documentation/display/current/Hello+World+on+CloudHub) (Or you can do it later as a next step), you need to go to Deployment > Advanced to set all environment variables detailed in **Properties to be configured** as well as the **mule.env**.
-Once your app is all set and started, supposing you choose as domain name `wday2snowemployeeaggregation` to trigger the use case you just need to hit `http://wday2snowemployeeaggregation.cloudhub.io/generatereport` and the report will be sent to the e-mails configured.
+Once your app is all set and started, supposing you choose as domain name `wday2snowworkeraggregation` to trigger the use case you just need to hit `http://wday2snowworkeraggregation.cloudhub.io/generatereport` and the report will be sent to the e-mails configured.
 
 ### Deploying your Anypoint Template on CloudHub <a name="deployingyouranypointtemplateoncloudhub"/>
 Mule Studio provides you with really easy way to deploy your Template directly to CloudHub, for the specific steps to do so please check this [link](http://www.mulesoft.org/documentation/display/current/Deploying+Mule+Applications#DeployingMuleApplications-DeploytoCloudHub)
@@ -112,7 +112,6 @@ In order to use this Mule Anypoint Template you need to configure properties (Cr
 ### Application configuration
 + http.port `9090` 
 + wday.page.size `100`
-# Properties to be used on the development environment
 
 #### WorkDay Connector configuration
 + wday.user `user@mulesoft`
@@ -133,9 +132,9 @@ In order to use this Mule Anypoint Template you need to configure properties (Cr
 #### Mail details
 + mail.from `exampleuser@gmail.com`
 + mail.to `woody.guthrie@gmail.com`
-+ mail.subject `Employee migration Report`
-+ mail.body `Employee migration report`
-+ attachment.name `EmployeeReport.csv`
++ mail.subject `Worker migration Report`
++ mail.body `Worker migration report`
++ attachment.name `WorkerReport.csv`
 
 # API Calls <a name="apicalls"/>
 There are no special considerations regarding API calls.
@@ -166,18 +165,18 @@ The *mainFlow* organises the job in three different steps and finally invokes th
 This flow has Exception Strategy that basically consists on invoking the *defaultChoiseExceptionStrategy* defined in *errorHandling.xml* file.
 
 
-Mainly consisting of two calls (Queries) to Workday and Service Now and storing each response on the Invocation Variable named *employeesFromOrgA* or *employeesFromOrgB* accordingly.
+Mainly consisting of two calls (Queries) to Workday and Service Now and storing each response on the Invocation Variable named *workersFromOrgA* or *workersFromOrgB* accordingly.
 
 [Java Transformer](http://www.mulesoft.org/documentation/display/current/Java+Transformer+Reference) responsible for aggregating the results from Workday and Service Now.
 Criteria and format applied:
-+ Transformer receives a Mule Message with the two Invocation variables *employeesFromOrgA* and *employeesFromOrgB* to result in List of Maps with keys: **Name**, **Email**, **IDInA** and **IDInB**.
-+ Employees will be matched by email, that is to say, a record in both systems with the same email is considered the same employee.
++ Transformer receives a Mule Message with the two Invocation variables *workersFromOrgA* and *workersFromOrgB* to result in List of Maps with keys: **Name**, **Email**, **IDInA** and **IDInB**.
++ Workers will be matched by email, that is to say, a record in both systems with the same email is considered the same worker.
 
-+ [Java Transformer](http://www.mulesoft.org/documentation/display/current/Java+Transformer+Reference) responsible for sorting the list of employees in the following order:
++ [Java Transformer](http://www.mulesoft.org/documentation/display/current/Java+Transformer+Reference) responsible for sorting the list of workers in the following order:
 
-1. Employees only in Workday
-2. Employees only in Service Now
-3. Employees in both systems
+1. Workers only in Workday
+2. Workers only in Service Now
+3. Workers in both systems
 
 All records ordered alphabetically by email within each category.
 If you want to change this order then the *compare* method should be modified.

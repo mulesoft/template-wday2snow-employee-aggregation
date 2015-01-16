@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <configuration>
 	<placeholders>
-		<placeholder id="template_name">Workday to Service Now Employee Aggregation</placeholder>
+		<placeholder id="template_name">Workday to Service Now Worker Aggregation</placeholder>
 	</placeholders>
 	<sections>
 		<section id="use_case">
-I want to aggregate employees from Workday and ServiceNow Instances and compare them to see which employees can only be found in one of the two and which employees are in both instances. 
+I want to aggregate workers from Workday and ServiceNow Instances and compare them to see which workers can only be found in one of the two and which workers are in both instances. 
 
 For practical purposes this Template will generate the result in the format of a CSV Report sent by email.
 
 This Template should serve as a foundation for extracting data from two systems, aggregating data, comparing values of fields for the objects, and generating a report on the differences. 
 
-As implemented, it gets employees from one instance of Workday and one instance of ServiceNow, compares by the email address of the employees, and generates a CSV file which shows employee in A (WorkDay), employee in B (ServiceNow), and employees in A and B. The report is then e-mailed to the configured e-mail address.		</section>
+As implemented, it gets workers from one instance of Workday and one instance of ServiceNow, compares by the email address of the workers, and generates a CSV file which shows workers in A (WorkDay), workers in B (ServiceNow), and workers in A and B. The report is then e-mailed to the configured e-mail address.		</section>
 		<section id="considerations">
 <![CDATA[
 To make this Anypoint Template run, there are certain preconditions that must be considered. All of them deal with the preparations in both, that must be made in order for all to run smoothly. **Failling to do so could lead to unexpected behavior of the template.**
@@ -20,7 +20,7 @@ To make this Anypoint Template run, there are certain preconditions that must be
 		
 		<section id="running_on_cloudhub">
 <![CDATA[
-Once your app is all set and started, supposing you choose as domain name `wday2snowemployeeaggregation` to trigger the use case you just need to hit `http://wday2snowemployeeaggregation.cloudhub.io/generatereport` and the report will be sent to the e-mails configured.
+Once your app is all set and started, supposing you choose as domain name `wday2snowworkeraggregation` to trigger the use case you just need to hit `http://wday2snowworkeraggregation.cloudhub.io/generatereport` and the report will be sent to the e-mails configured.
 ]]>
 		</section>
 		<section id="default_running_on_premise">
@@ -34,8 +34,6 @@ After this, to trigger the use case you just need to hit the local http endpoint
 		<![CDATA[
 + http.port `9090` 
 + wday.page.size `100`
-
-# Properties to be used on the development environment
 
 #### WorkDay Connector configuration
 + wday.user `user@mulesoft`
@@ -56,9 +54,9 @@ After this, to trigger the use case you just need to hit the local http endpoint
 #### Mail details
 + mail.from `exampleuser@gmail.com`
 + mail.to `woody.guthrie@gmail.com`
-+ mail.subject `Employee migration Report`
-+ mail.body `Employee migration report`
-+ attachment.name `EmployeeReport.csv`
++ mail.subject `Worker migration Report`
++ mail.body `Worker migration report`
++ attachment.name `WorkerReport.csv`
 ]]>
 		</section>
 		<section id="api_calls">
@@ -84,20 +82,20 @@ This flow has Exception Strategy that basically consists on invoking the *defaul
 
 
 ###  Gather Data Flow
-Mainly consisting of two calls (Queries) to Workday and Service Now and storing each response on the Invocation Variable named *employeesFromOrgA* or *employeesFromOrgB* accordingly.
+Mainly consisting of two calls (Queries) to Workday and Service Now and storing each response on the Invocation Variable named *workersFromOrgA* or *workersFromOrgB* accordingly.
 
 ###  Aggregation Flow
 [Java Transformer](http://www.mulesoft.org/documentation/display/current/Java+Transformer+Reference) responsible for aggregating the results from Workday and Service Now.
 Criteria and format applied:
-+ Transformer receives a Mule Message with the two Invocation variables *employeesFromOrgA* and *employeesFromOrgB* to result in List of Maps with keys: **Name**, **Email**, **IDInA** and **IDInB**.
-+ Employees will be matched by email, that is to say, a record in both systems with the same email is considered the same employee.
++ Transformer receives a Mule Message with the two Invocation variables *workersFromOrgA* and *workersFromOrgB* to result in List of Maps with keys: **Name**, **Email**, **IDInA** and **IDInB**.
++ Workers will be matched by email, that is to say, a record in both systems with the same email is considered the same worker.
 
 ###  Format Output Flow
-+ [Java Transformer](http://www.mulesoft.org/documentation/display/current/Java+Transformer+Reference) responsible for sorting the list of employees in the following order:
++ [Java Transformer](http://www.mulesoft.org/documentation/display/current/Java+Transformer+Reference) responsible for sorting the list of workers in the following order:
 
-1. Employees only in Workday
-2. Employees only in Service Now
-3. Employees in both systems
+1. Workers only in Workday
+2. Workers only in Service Now
+3. Workers in both systems
 
 All records ordered alphabetically by email within each category.
 If you want to change this order then the *compare* method should be modified.

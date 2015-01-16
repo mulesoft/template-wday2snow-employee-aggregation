@@ -28,10 +28,10 @@ import org.mule.tck.junit4.rule.DynamicPort;
  */
 public class BusinessLogicIT extends AbstractTemplateTestCase {
 
-	private static final String EMPLOYEES_FROM_ORG_A = "employeesFromOrgA";
-	private static final String EMPLOYESS_FROM_ORG_B = "employeesFromOrgB";
+	private static final String WORKERS_FROM_ORG_A = "workersFromOrgA";
+	private static final String WORKERS_FROM_ORG_B = "workersFromOrgB";
 	
-	protected static final String TEMPLATE_NAME = "employee-aggregation";
+	protected static final String TEMPLATE_NAME = "worker-aggregation";
 	
 	@Rule
 	public DynamicPort port = new DynamicPort("http.port");
@@ -44,8 +44,8 @@ public class BusinessLogicIT extends AbstractTemplateTestCase {
 		flow.start();
 		MuleEvent event = flow.process(getTestEvent("", MessageExchangePattern.REQUEST_RESPONSE));
 		
-		Assert.assertTrue("There should be workers from Workday.", ((ArrayList<Map<String, String>>)event.getFlowVariable(EMPLOYEES_FROM_ORG_A)).size() != 0);
-		Assert.assertTrue("There should be users from ServiceNow.", ((ArrayList<Map<String, String>>)event.getFlowVariable(EMPLOYESS_FROM_ORG_B)).size() != 0);
+		Assert.assertTrue("There should be workers from Workday.", ((ArrayList<Map<String, String>>)event.getFlowVariable(WORKERS_FROM_ORG_A)).size() != 0);
+		Assert.assertTrue("There should be users from ServiceNow.", ((ArrayList<Map<String, String>>)event.getFlowVariable(WORKERS_FROM_ORG_B)).size() != 0);
 
 	}
 
@@ -82,8 +82,8 @@ public class BusinessLogicIT extends AbstractTemplateTestCase {
 		List<Map<String, String>> listB = new ArrayList<Map<String,String>>();
 		listB.add(createUser());
 		MuleEvent event = getTestEvent("");
-		event.getMessage().setInvocationProperty(EMPLOYEES_FROM_ORG_A, listA);
-		event.getMessage().setInvocationProperty(EMPLOYESS_FROM_ORG_B, listB);
+		event.getMessage().setInvocationProperty(WORKERS_FROM_ORG_A, listA);
+		event.getMessage().setInvocationProperty(WORKERS_FROM_ORG_B, listB);
 		return event;
 	}
 
@@ -96,12 +96,12 @@ public class BusinessLogicIT extends AbstractTemplateTestCase {
 		return user;
 	}	
 
-	private void deleteTestObjectFromSandBox(List<Map<String, Object>> createdEmployees, String deleteFlow) throws Exception {
+	private void deleteTestObjectFromSandBox(List<Map<String, Object>> created, String deleteFlow) throws Exception {
 		List<String> idList = new ArrayList<String>();
 
 		SubflowInterceptingChainLifecycleWrapper flow = getSubFlow(deleteFlow);
 		flow.initialise();
-		for (Map<String, Object> c : createdEmployees) {
+		for (Map<String, Object> c : created) {
 			idList.add((String) c.get("Id"));
 		}
 		flow.process(getTestEvent(idList, MessageExchangePattern.REQUEST_RESPONSE));
