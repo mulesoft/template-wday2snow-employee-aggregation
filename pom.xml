@@ -9,10 +9,10 @@
 		<version>1.1.0</version>
 	</parent>
 
-	<artifactId>template-wday2snow-worker-aggregation</artifactId>
+	<artifactId>template-wday2snow-employee-aggregation</artifactId>
 	<packaging>mule</packaging>
 	<version>1.1.0-SNAPSHOT</version>
-	<name>template-wday2snow-worker-aggregation Anypoint Template Project</name>
+	<name>template-wday2snow-employee-aggregation Anypoint Template Project</name>
 
 	<properties>
 		<workday.version>4.0.0</workday.version>
@@ -81,9 +81,9 @@
 		</repository>
 	</repositories>	
 	<scm>
-		<connection>scm:git:https://github.com/mulesoft/template-wday2snow-worker-aggregation.git</connection>
-		<developerConnection>scm:git:https://github.com/mulesoft/template-wday2snow-worker-aggregation.git</developerConnection>
-		<url>http://github.com/mulesoft/template-wday2snow-worker-aggregation</url>
+		<connection>scm:git:https://github.com/mulesoft/template-wday2snow-employee-aggregation.git</connection>
+		<developerConnection>scm:git:https://github.com/mulesoft/template-wday2snow-employee-aggregation.git</developerConnection>
+		<url>http://github.com/mulesoft/template-wday2snow-employee-aggregation</url>
 	  <tag>HEAD</tag>
   </scm>
 </project>
