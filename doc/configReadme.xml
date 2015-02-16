@@ -54,8 +54,8 @@ After this, to trigger the use case you just need to hit the local http endpoint
 #### Mail details
 + mail.from `exampleuser@gmail.com`
 + mail.to `woody.guthrie@gmail.com`
-+ mail.subject `Worker migration Report`
-+ mail.body `Worker migration report`
++ mail.subject `Worker aggregation Report`
++ mail.body `Worker aggregation report`
 + attachment.name `WorkerReport.csv`
 ]]>
 		</section>
@@ -64,11 +64,12 @@ After this, to trigger the use case you just need to hit the local http endpoint
 		</section>
 		<section id="default_endpoints_xml">
 		<![CDATA[
-This is the file where you will found the inbound and outbound sides of your integration app.
-This Template has an [HTTP Inbound Endpoint](http://www.mulesoft.org/documentation/display/current/HTTP+Endpoint+Reference) as the way to trigger the use case and an [SMTP Transport](http://www.mulesoft.org/documentation/display/current/SMTP+Transport+Reference) as the outbound way to send the report.
+This is the file where you will find the inbound and outbound sides of your integration app.
+This Template has an [HTTP Listener Connector](http://www.mulesoft.org/documentation/display/current/HTTP+Listener+Connector) as the way to trigger the use case and an [SMTP Transport](http://www.mulesoft.org/documentation/display/current/SMTP+Transport+Reference) as the outbound way to send the report.
 
-###  Trigger Flow
-**HTTP Inbound Endpoint** - Start Report Generation
+$H$H# Trigger Flow
+**HTTP Listener Connector** - Start Report Generation
+
 + `${http.port}` is set as a property to be defined either on a property file or in CloudHub environment variables.
 + The path configured by default is `generatereport` and you are free to change for the one you prefer.
 + The host name for all endpoints in your CloudHub configuration should be defined as `localhost`. CloudHub will then route requests from your application domain URL to the endpoint.
@@ -81,30 +82,37 @@ The *mainFlow* organises the job in three different steps and finally invokes th
 This flow has Exception Strategy that basically consists on invoking the *defaultChoiseExceptionStrategy* defined in *errorHandling.xml* file.
 
 
-###  Gather Data Flow
-Mainly consisting of two calls (Queries) to Workday and Service Now and storing each response on the Invocation Variable named *workersFromOrgA* or *workersFromOrgB* accordingly.
+$H$H# Gather Data Flow
+Mainly consisting of two calls (Queries) to Workday and Service Now and aggregating the results.
 
-###  Aggregation Flow
-[Java Transformer](http://www.mulesoft.org/documentation/display/current/Java+Transformer+Reference) responsible for aggregating the results from Workday and Service Now.
+[Scatter Gather](http://www.mulesoft.org/documentation/display/current/Scatter-Gather) is responsible for aggregating the results from the two collections of Workers.
 Criteria and format applied:
-+ Transformer receives a Mule Message with the two Invocation variables *workersFromOrgA* and *workersFromOrgB* to result in List of Maps with keys: **Name**, **Email**, **IDInA** and **IDInB**.
-+ Workers will be matched by email, that is to say, a record in both systems with the same email is considered the same worker.
 
-###  Format Output Flow
-+ [Java Transformer](http://www.mulesoft.org/documentation/display/current/Java+Transformer+Reference) responsible for sorting the list of workers in the following order:
++ Scatter Gather component implements an aggregation strategy that results in List of Maps with keys: **Name**, **Email**, **IDInWorkday**, **IDInServiceNow**, **UsernameInWorkday** and **UsernameInServiceNow**. 
++ Workers will be matched by Email, that is to say, a record in both systems with the same Email is considered the same worker.
+
+$H$H# workdayRetrievalMapperFlow
+Workers are loaded by [Workday connector](http://www.mulesoft.org/documentation/display/current/Workday+Connector) to List of Maps with keys: **Id**, **Name**, **Email** and **Username**.
+
+$H$H# snowRetrievalMapperFlow
+Users are loaded by [ServiceNow connector](http://www.mulesoft.org/documentation/display/current/ServiceNow+Connector) to List of Maps with keys: **Id**, **Name**, **Email** and **Username**.
+
+$H$H# Format Output Flow
+[Java Transformer](http://www.mulesoft.org/documentation/display/current/Java+Transformer+Reference) is responsible for sorting the list of workers in the following order:
 
 1. Workers only in Workday
 2. Workers only in Service Now
 3. Workers in both systems
 
-All records ordered alphabetically by email within each category.
+All records ordered alphabetically by IDs within each category.
 If you want to change this order then the *compare* method should be modified.
 
-+ CSV Report [DataMapper](http://www.mulesoft.org/documentation/display/current/Datamapper+User+Guide+and+Reference) transforming the List of Maps in CSV with headers **Name**, **Email**, **IDInA**, and **IDInB**.
++ CSV Report [DataMapper](http://www.mulesoft.org/documentation/display/current/Datamapper+User+Guide+and+Reference) transforming the List of Maps in CSV with headers **Name**, **Email**, **IDInWorkday**, **IDInServiceNow**, **UsernameInWorkday** and **UsernameInServiceNow**. 
 + An [Object to string transformer](http://www.mulesoft.org/documentation/display/current/Transformers) is used to set the payload as an String. 
 
-###  Outbound Flow
+$H$H# Outbound Flow
 **SMTP Outbound Endpoint** - Send email
+
 + Both SMTP Server configuration and the actual email to be sent are defined in this endpoint.
 + This flow is going to be invoked from the flow that does all the functional work: *mainFlow*, the same that is invoked from the Inbound Flow upon triggering of the HTTP Endpoint.
 ]]>
