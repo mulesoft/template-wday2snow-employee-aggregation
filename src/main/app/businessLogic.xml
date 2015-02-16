@@ -20,15 +20,14 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 
 
 	<data-mapper:config name="map_to_csv" transformationGraphPath="map_to_csv.grf" doc:name="map_to_csv" />
-    <data-mapper:config name="servicenowUsers_to_maps" transformationGraphPath="servicenowUsers_to_maps.grf" doc:name="servicenowUsers_to_maps"/>
-    <data-mapper:config name="workdayWorkers_to_maps" transformationGraphPath="workdayWorkers_to_maps.grf" doc:name="workdayWorkers_to_maps"/>
+    <data-mapper:config name="ServiceNow_Users_to_Maps" transformationGraphPath="servicenow_users_to_maps.grf" doc:name="ServiceNow_Users_to_Maps"/>
+    <data-mapper:config name="Workday_Workers_to_Maps" transformationGraphPath="workday_workers_to_maps.grf" doc:name="Workday_Workers_to_Maps"/>
 
 	<flow name="mainFlow" 
 		doc:description="This flow is the entry point to the Template business logic.
 
 This flow should control the direction of the application, and it should be called by the different endpoints that your Template exposes to trigger it.">
 		<flow-ref name="gatherDataFlow" doc:name="call gatherDataFlow" />
-		<flow-ref name="aggregationFlow" doc:name="call aggregationFlow" />
 		<flow-ref name="formatOutputFlow" doc:name="call formatOutputFlow" />
 		<flow-ref name="outboundFlow" doc:name="call outboundFlow" />
 		<exception-strategy ref="defaultChoiceExceptionStrategy"
@@ -36,30 +35,28 @@ This flow should control the direction of the application, and it should be call
 	</flow>
 
 	<sub-flow name="gatherDataFlow" >
-		<enricher source="#[payload]" target="#[flowVars['workersFromOrgA']]"
-			doc:name="Store result in FlowVar 'workersFromOrgA'">
-            <processor-chain doc:name="Processor Chain">
-                <wd-hr:get-workers config-ref="Workday_Human_Resource" workersRequest-ref="#[org.mule.templates.WorkerRequest.createRequest(${wday.page.size})]" doc:name="get Workers from Workday Human Resource"/>
-                <data-mapper:transform config-ref="workdayWorkers_to_maps" doc:name="Workday Workers to Maps"/>
-            </processor-chain>
-		</enricher>
-		<enricher source="#[payload]" target="#[flowVars['workersFromOrgB']]"
-			doc:name="Store result in FlowVar 'workersFromOrgB'">
-            <processor-chain doc:name="Processor Chain">
-                <servicenow:get-records config-ref="ServiceNow" doc:name="ServiceNow" type="SYS_USER">
-                    <servicenow:get-records-request>
-
-                    </servicenow:get-records-request>
-                </servicenow:get-records>
-                <data-mapper:transform config-ref="servicenowUsers_to_maps" doc:name="ServiceNow users to Maps"/>
-            </processor-chain>
-		</enricher>
+        <scatter-gather doc:name="Scatter-Gather">
+            <custom-aggregation-strategy class="org.mule.templates.transformers.WorkersMergeAggregationStrategy"/>
+            <flow-ref name="workdayRetrievalMapperFlow" doc:name="call workdayRetrievalMapperFlow"/>
+            <flow-ref name="snowRetrievalMapperFlow" doc:name="call snowRetrievalMapperFlow"/>
+        </scatter-gather>
 	</sub-flow>
+    <sub-flow name="workdayRetrievalMapperFlow">
+        <processor-chain doc:name="Processor Chain">
+            <wd-hr:get-workers config-ref="Workday_Human_Resource" workersRequest-ref="#[org.mule.templates.WorkerRequest.createRequest(${wday.page.size})]" doc:name="get Workers from Workday Human Resource"/>
+            <data-mapper:transform config-ref="Workday_Workers_to_Maps" doc:name="Workday Workers to Maps"/>
+        </processor-chain>
+    </sub-flow>
+    <sub-flow name="snowRetrievalMapperFlow">
+        <processor-chain doc:name="Processor Chain">
+            <servicenow:get-records config-ref="ServiceNow" doc:name="ServiceNow" type="SYS_USER">
+           		<servicenow:get-records-request>
 
-	<sub-flow name="aggregationFlow" >
-		<custom-transformer class="org.mule.templates.transformers.MergeWorkersTransformer"
-			doc:name="Custom component to build merged workers list" />
-	</sub-flow>
+           		</servicenow:get-records-request>
+       		</servicenow:get-records>
+            <data-mapper:transform config-ref="ServiceNow_Users_to_Maps" doc:name="ServiceNow Users to Maps"/>
+        </processor-chain>
+    </sub-flow>
 
 	<sub-flow name="formatOutputFlow" >
 		<custom-transformer class="org.mule.templates.transformers.SortWorkersTransformer"

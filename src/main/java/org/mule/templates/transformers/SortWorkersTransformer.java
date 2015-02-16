@@ -39,22 +39,22 @@ public class SortWorkersTransformer extends AbstractMessageTransformer {
 		private String buildKey(Map<String, String> worker) {
 			StringBuilder key = new StringBuilder();
 
-			if (StringUtils.isNotBlank(worker.get("IDInA")) && StringUtils.isNotBlank(worker.get("IDInB"))) {
+			if (StringUtils.isNotBlank(worker.get("IDInWorkday")) && StringUtils.isNotBlank(worker.get("IDInServiceNow"))) {
 				key.append("~~");
-				key.append(worker.get("IDInA"));
-				key.append(worker.get("IDInB"));
+				key.append(worker.get("IDInWorkday"));
+				key.append(worker.get("IDInServiceNow"));
 				key.append(worker.get("Email"));
 			}
 
-			if (StringUtils.isNotBlank(worker.get("IDInA")) && StringUtils.isBlank(worker.get("IDInB"))) {
-				key.append(worker.get("IDInA"));
+			if (StringUtils.isNotBlank(worker.get("IDInWorkday")) && StringUtils.isBlank(worker.get("IDInServiceNow"))) {
+				key.append(worker.get("IDInWorkday"));
 				key.append("~");
 				key.append(worker.get("Email"));
 			}
 
-			if (StringUtils.isBlank(worker.get("IDInA")) && StringUtils.isNotBlank(worker.get("IDInB"))) {
+			if (StringUtils.isBlank(worker.get("IDInWorkday")) && StringUtils.isNotBlank(worker.get("IDInServiceNow"))) {
 				key.append("~");
-				key.append(worker.get("IDInB"));
+				key.append(worker.get("IDInServiceNow"));
 				key.append(worker.get("Email"));
 			}
 

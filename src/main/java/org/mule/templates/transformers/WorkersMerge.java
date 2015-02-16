@@ -11,35 +11,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mule.api.MuleMessage;
-import org.mule.api.transformer.TransformerException;
-import org.mule.transformer.AbstractMessageTransformer;
-
 /**
- * This transformer will take to list as input and create a third one that will be the merge of the previous two. The identity of an element of the list is
+ * This class will take two lists as input and create a third one that
+ * will be the merge of the previous two. The identity of an element of the list is
  * defined by its email.
  * 
  * @author cesar.garcia
  */
-public class MergeWorkersTransformer extends AbstractMessageTransformer {
-
-	private static final String QUERY_COMPANY_A = "workersFromOrgA";
-	private static final String QUERY_COMPANY_B = "workersFromOrgB";
-
-	@Override
-	public Object transformMessage(MuleMessage message, String outputEncoding) throws TransformerException {
-
-		List<Map<String, String>> mergedWorkerList = mergeList(getWorkerList(message, QUERY_COMPANY_A), getWorkerList(message, QUERY_COMPANY_B));
-
-		return mergedWorkerList;
-	}
-
-	private List<Map<String, String>> getWorkerList(MuleMessage message, String propertyName) {
-		return message.<List<Map<String, String>>>getInvocationProperty(propertyName);
-	}
+public class WorkersMerge {
 
 	/**
-	 * The method will merge the accounts from the two lists creating a new one.
+	 * The method will merge the workers from the two lists creating a new one.
 	 * 
 	 * @param workersFromOrgA
 	 *            workers from organization A
@@ -47,14 +29,15 @@ public class MergeWorkersTransformer extends AbstractMessageTransformer {
 	 *            workers from organization B
 	 * @return a list with the merged content of the to input lists
 	 */
-	private List<Map<String, String>> mergeList(List<Map<String, String>> workersFromOrgA, List<Map<String, String>> workersFromOrgB) {
+	public List<Map<String, String>> mergeList(List<Map<String, String>> workersFromOrgA, List<Map<String, String>> workersFromOrgB) {
 		try{
 			List<Map<String, String>> mergedWorkersList = new ArrayList<Map<String, String>>();
 	
 			// Put all workers from A in the merged mergedWorkersList
 			for (Map<String, String> workerFromA : workersFromOrgA) {
 				Map<String, String> mergedWorker = createMergedWorker(workerFromA);
-				mergedWorker.put("IDInA", workerFromA.get("Id"));
+				mergedWorker.put("IDInWorkday", workerFromA.get("Id"));
+				mergedWorker.put("UsernameInWorkday", workerFromA.get("Username"));
 				mergedWorkersList.add(mergedWorker);
 			}
 	
@@ -62,10 +45,12 @@ public class MergeWorkersTransformer extends AbstractMessageTransformer {
 			for (Map<String, String> workerFromB : workersFromOrgB) {
 				Map<String, String> workersFromA = findWorkerInList(workerFromB.get("Email"), mergedWorkersList);
 				if (workersFromA != null) {
-					workersFromA.put("IDInB", workerFromB.get("Id"));
+					workersFromA.put("IDInServiceNow", workerFromB.get("Id"));
+					workersFromA.put("UsernameInServiceNow", workerFromB.get("Username"));
 				} else {
 					Map<String, String> mergedWorker = createMergedWorker(workerFromB);
-					mergedWorker.put("IDInB", workerFromB.get("Id"));
+					mergedWorker.put("IDInServiceNow", workerFromB.get("Id"));
+					mergedWorker.put("UsernameInServiceNow", workerFromB.get("Username"));
 					mergedWorkersList.add(mergedWorker);
 				}
 	
@@ -82,8 +67,10 @@ public class MergeWorkersTransformer extends AbstractMessageTransformer {
 		Map<String, String> mergedWorker = new HashMap<String, String>();
 		mergedWorker.put("Name", worker.get("Name"));
 		mergedWorker.put("Email", worker.get("Email"));
-		mergedWorker.put("IDInA", "");
-		mergedWorker.put("IDInB", "");
+		mergedWorker.put("IDInWorkday", "");
+		mergedWorker.put("IDInServiceNow", "");
+		mergedWorker.put("UsernameInWorkday", "");
+		mergedWorker.put("UsernameInServiceNow", "");
 		return mergedWorker;
 	}
 
