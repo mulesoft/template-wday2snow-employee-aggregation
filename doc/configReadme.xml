@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <configuration>
 	<placeholders>
-		<placeholder id="template_name">Workday to Service Now Worker Aggregation</placeholder>
+		<placeholder id="template_name">Workday and ServiceNow Worker Aggregation</placeholder>
 	</placeholders>
 	<sections>
 		<section id="use_case">
@@ -77,8 +77,8 @@ $H$H# Trigger Flow
 		</section>
 		<section id="default_business_logic_xml">
 		<![CDATA[
-Functional aspect of the Template is implemented on this XML, directed by one flow responsible of conducting the aggregation of data, comparing records and finally formating the output, in this case being a report.
-The *mainFlow* organises the job in three different steps and finally invokes the *outboundFlow* that will deliver the report to the corresponding outbound endpoint.
+Functional aspect of the Template is implemented on this XML, directed by one flow responsible of conducting the aggregation of data, comparing records and finally formating the output, in this case a CSV report.
+The *mainFlow* organizes the job in three different steps and finally invokes the *outboundFlow* that will deliver the report to the corresponding outbound endpoint.
 This flow has Exception Strategy that basically consists on invoking the *defaultChoiseExceptionStrategy* defined in *errorHandling.xml* file.
 
 
@@ -101,10 +101,10 @@ $H$H# Format Output Flow
 [Java Transformer](http://www.mulesoft.org/documentation/display/current/Java+Transformer+Reference) is responsible for sorting the list of workers in the following order:
 
 1. Workers only in Workday
-2. Workers only in Service Now
+2. Workers only in ServiceNow
 3. Workers in both systems
 
-All records ordered alphabetically by IDs within each category.
+All records are ordered alphabetically by IDs within each category.
 If you want to change this order then the *compare* method should be modified.
 
 + CSV Report [DataMapper](http://www.mulesoft.org/documentation/display/current/Datamapper+User+Guide+and+Reference) transforming the List of Maps in CSV with headers **Name**, **Email**, **IDInWorkday**, **IDInServiceNow**, **UsernameInWorkday** and **UsernameInServiceNow**. 
@@ -113,8 +113,8 @@ If you want to change this order then the *compare* method should be modified.
 $H$H# Outbound Flow
 **SMTP Outbound Endpoint** - Send email
 
-+ Both SMTP Server configuration and the actual email to be sent are defined in this endpoint.
-+ This flow is going to be invoked from the flow that does all the functional work: *mainFlow*, the same that is invoked from the Inbound Flow upon triggering of the HTTP Endpoint.
++ Both SMTP Server configuration and the actual e-mail to be sent are defined in this endpoint.
++ This flow is going to be invoked from the flow that does all the functional work: *mainFlow*, the same that is invoked from the Inbound Flow upon triggering of the HTTP Connector.
 ]]>
 		</section>
 	</sections>

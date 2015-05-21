@@ -11,8 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Assert;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -25,6 +26,9 @@ import org.mule.api.transformer.TransformerException;
 @SuppressWarnings("unchecked")
 @RunWith(MockitoJUnitRunner.class)
 public class SortWorkersTransformerTest {
+	
+	private static final Logger log = LogManager.getLogger(SortWorkersTransformerTest.class);
+	
 	@Mock
 	private MuleContext muleContext;
 
@@ -36,7 +40,7 @@ public class SortWorkersTransformerTest {
 		SortWorkersTransformer transformer = new SortWorkersTransformer();
 		List<Map<String, String>> sortedList = (List<Map<String, String>>) transformer.transform(message, "UTF-8");
 
-		System.out.println(sortedList);
+		log.info(sortedList);
 		Assert.assertEquals("The merged list obtained is not as expected", createOriginalList(), sortedList);
 
 	}
