@@ -14,10 +14,6 @@
 	<version>1.1.1-SNAPSHOT</version>
 	<name>template-wday2snow-employee-aggregation Anypoint Template Project</name>
 
-	<properties>
-		<workday.version>4.0.0</workday.version>	
-	</properties>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -41,11 +37,6 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.mule.modules</groupId>
-			<artifactId>mule-module-workday</artifactId>
-			<version>${workday.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-module-servicenow</artifactId>
