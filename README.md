@@ -26,13 +26,13 @@ Note that using this template is subject to the conditions of this [License Agre
 Please review the terms of the license before downloading and using this template. In short, you are allowed to use the template for free with Mule ESB Enterprise Edition, CloudHub, or as a trial in Anypoint Studio.
 
 # Use Case <a name="usecase"/>
-I want to aggregate workers from Workday and ServiceNow Instances and compare them to see which workers can only be found in one of the two and which workers are in both instances. 
+I want to aggregate workers from Workday and users from ServiceNow Instances and compare them to see which workers(users) can only be found in one of the two and which workers(users) are in both instances. 
 
 For practical purposes this Template will generate the result in the format of a CSV Report sent by email.
 
 This Template should serve as a foundation for extracting data from two systems, aggregating data, comparing values of fields for the objects, and generating a report on the differences. 
 
-As implemented, it gets workers from one instance of Workday and one instance of ServiceNow, compares by the email address of the workers, and generates a CSV file which shows workers in A (WorkDay), workers in B (ServiceNow), and workers in A and B. The report is then e-mailed to the configured e-mail address.
+As implemented, it gets workers from one instance of Workday and users from one instance of ServiceNow, compares by the email address of the workers(users), and generates a CSV file which shows workers in A (Workday), users in B (ServiceNow), and workers(users) in A and B. The report is then e-mailed to the configured e-mail address.
 
 # Considerations <a name="considerations"/>
 
@@ -115,17 +115,17 @@ Mule Studio provides you with really easy way to deploy your Template directly t
 In order to use this Mule Anypoint Template you need to configure properties (Credentials, configurations, etc.) either in properties file or in CloudHub as Environment Variables. Detail list with examples:
 ### Application configuration
 + http.port `9090` 
-+ wday.page.size `200`
++ page.size `200`
 
 #### WorkDay Connector configuration
 + wday.user `user@mulesoft`
 + wday.password `secret`
-+ wday.endpoint `https://impl-cc.workday.com/ccx/service/mulesoft/Human_Resources/v21.1`
++ wday.endpoint `https://impl-cc.workday.com/ccx/service/mulesoft/Human_Resources/v23.1`
 
 #### ServiceNow Connector configuration
 + snow.user `mule.snow`
 + snow.password `secret`
-+ snow.endpoint `https://dev107.service-now.com`
++ snow.endpoint `https://dev147.service-now.com`
 
 #### SMPT Services configuration
 + smtp.host `smtp.gmail.com`
@@ -172,11 +172,11 @@ This flow has Exception Strategy that basically consists on invoking the *defaul
 ### Gather Data Flow
 Mainly consisting of two calls (Queries) to Workday and Service Now and aggregating the results.
 
-[Scatter Gather](http://www.mulesoft.org/documentation/display/current/Scatter-Gather) is responsible for aggregating the results from the two collections of Workers.
+[Scatter Gather](http://www.mulesoft.org/documentation/display/current/Scatter-Gather) is responsible for aggregating the results from the collection of Workers and collection of Users.
 Criteria and format applied:
 
 + Scatter Gather component implements an aggregation strategy that results in List of Maps with keys: **Name**, **Email**, **IDInWorkday**, **IDInServiceNow**, **UsernameInWorkday** and **UsernameInServiceNow**. 
-+ Workers will be matched by Email, that is to say, a record in both systems with the same Email is considered the same worker.
++ Workers(users) will be matched by Email, that is to say, a record in both systems with the same Email is considered the same worker(user).
 
 ### workdayRetrievalMapperFlow
 Workers are loaded by [Workday connector](http://www.mulesoft.org/documentation/display/current/Workday+Connector) to List of Maps with keys: **Id**, **Name**, **Email** and **Username**.
@@ -188,13 +188,13 @@ Users are loaded by [ServiceNow connector](http://www.mulesoft.org/documentation
 [Java Transformer](http://www.mulesoft.org/documentation/display/current/Java+Transformer+Reference) is responsible for sorting the list of workers in the following order:
 
 1. Workers only in Workday
-2. Workers only in ServiceNow
-3. Workers in both systems
+2. Users only in ServiceNow
+3. Workers(users) in both systems
 
 All records are ordered alphabetically by IDs within each category.
 If you want to change this order then the *compare* method should be modified.
 
-+ CSV Report [DataMapper](http://www.mulesoft.org/documentation/display/current/Datamapper+User+Guide+and+Reference) transforming the List of Maps in CSV with headers **Name**, **Email**, **IDInWorkday**, **IDInServiceNow**, **UsernameInWorkday** and **UsernameInServiceNow**. 
++ CSV Report is created by [DataWeave](http://mulesoft.github.io/data-weave/) transforming the List of Maps in CSV with headers **Name**, **Email**, **IDInWorkday**, **IDInServiceNow**, **UsernameInWorkday** and **UsernameInServiceNow**. 
 + An [Object to string transformer](http://www.mulesoft.org/documentation/display/current/Transformers) is used to set the payload as an String. 
 
 ### Outbound Flow
