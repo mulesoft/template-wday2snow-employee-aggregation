@@ -127,7 +127,7 @@ In order to use this Mule Anypoint Template you need to configure properties (Cr
 + snow.password `secret`
 + snow.endpoint `https://dev147.service-now.com`
 
-#### SMPT Services configuration
+#### SMTP Services configuration
 + smtp.host `smtp.gmail.com`
 + smtp.port `587`
 + smtp.user `exampleuser@gmail.com`
