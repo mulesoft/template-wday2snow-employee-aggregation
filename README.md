@@ -44,9 +44,6 @@ To make this Anypoint Template run, there are certain preconditions that must be
 
 ## ServiceNow Considerations <a name="servicenowconsiderations"/>
 
-There may be a few things that you need to know regarding ServiceNow, in order for this template to work.
-
-
 ### As destination of data
 
 There are no particular considerations for this Anypoint Template regarding ServiceNow as data destination.
