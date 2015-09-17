@@ -29,7 +29,7 @@ import org.mule.api.transformer.TransformerException;
 @RunWith(MockitoJUnitRunner.class)
 public class SortWorkersTransformerTest {
 	
-	private static final Logger log = LogManager.getLogger(SortWorkersTransformerTest.class);
+	private static final Logger LOGGER = LogManager.getLogger(SortWorkersTransformerTest.class);
 	
 	@Mock
 	private MuleContext muleContext;
@@ -48,7 +48,7 @@ public class SortWorkersTransformerTest {
 		SortWorkersTransformer transformer = new SortWorkersTransformer();
 		List<Map<String, String>> sortedList = (List<Map<String, String>>) transformer.transform(message, "UTF-8");
 
-		log.info(sortedList);
+		LOGGER.info(sortedList);
 		Assert.assertEquals("The merged list obtained is not as expected", createOriginalList(), sortedList);
 
 	}

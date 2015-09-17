@@ -24,7 +24,7 @@ import org.mule.api.transformer.TransformerException;
 @RunWith(MockitoJUnitRunner.class)
 public class WorkersMergeTest {
 	
-	private static final Logger log = LogManager.getLogger(WorkersMergeTest.class);
+	private static final Logger LOGGER = LogManager.getLogger(WorkersMergeTest.class);
 
 	@Mock
 	private MuleContext muleContext;
@@ -37,7 +37,7 @@ public class WorkersMergeTest {
 		WorkersMerge workersMerge = new WorkersMerge();
 		List<Map<String, String>> mergedList = workersMerge.mergeList(workersA, workersB);
 
-		log.info(mergedList);
+		LOGGER.info(mergedList);
 		Assert.assertEquals("The merged list obtained is not as expected", createExpectedList(), mergedList);
 
 	}
