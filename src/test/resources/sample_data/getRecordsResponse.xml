@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns0:getRecordsResponse xmlns:ns0="http://www.service-now.com/sys_user">
+  <ns0:getRecordsResult>
+    <ns0:email>sean.bonnet@example.com</ns0:email>
+    <ns0:name>Sean Bonnet</ns0:name>
+    <ns0:sys_id>02826bf03710200044e0bfc8bcbe1234</ns0:sys_id>
+    <ns0:user_name>sean.bonnet</ns0:user_name>
+  </ns0:getRecordsResult>
+</ns0:getRecordsResponse>

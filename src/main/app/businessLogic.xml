@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
+<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:wd-connector="http://www.mulesoft.org/schema/mule/wd-connector" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
 	xmlns="http://www.mulesoft.org/schema/mule/core" 
 	xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
 	xmlns:servicenow="http://www.mulesoft.org/schema/mule/servicenow"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:spring="http://www.springframework.org/schema/beans" 
 	xmlns:core="http://www.mulesoft.org/schema/mule/core"
-	xmlns:wd-hr="http://www.mulesoft.org/schema/mule/wd-hr"
-	version="EE-3.7.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
 http://www.mulesoft.org/schema/mule/servicenow http://www.mulesoft.org/schema/mule/servicenow/current/mule-servicenow.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/wd-hr http://www.mulesoft.org/schema/mule/wd-hr/current/mule-wd-hr.xsd
 http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
-http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/wd-connector http://www.mulesoft.org/schema/mule/wd-connector/current/mule-wd-connector.xsd">
 
 	<flow name="mainFlow" 
 		doc:description="This flow is the entry point to the Template business logic.
@@ -33,29 +32,37 @@ This flow should control the direction of the application, and it should be call
             <processor-chain>
                 <dw:transform-message doc:name="Create GetWorkers Request">
                     <dw:set-payload><![CDATA[%dw 1.0
-%output application/java 
---- 
-{ 
-	requestCriteria: { 
-		excludeInactiveWorkers: true
-	},
-	responseFilter: {
-		count: p('page.size')
+%output application/xml
+%namespace ns0 urn:com.workday/bsvc
+---
+{
+	ns0#Get_Workers_Request: {
+		ns0#Request_Criteria: {
+			ns0#Exclude_Inactive_Workers: true
+		},
+		ns0#Response_Filter: {
+			ns0#Count: p('page.size')
+		},
+		ns0#Response_Group: {
+			ns0#Include_Reference: true,
+			ns0#Include_Personal_Information: true
+		}
 	}
-} as :object {class: "com.workday.hr.GetWorkersRequestType"}]]></dw:set-payload>
+}]]></dw:set-payload>
                 </dw:transform-message>
-                <wd-hr:get-workers config-ref="Workday_Human_Resource" doc:name="get Workers from Workday Human Resource"/>
-                <dw:transform-message doc:name="Workday Workers to Maps">
+                <wd-connector:invoke config-ref="Workday__Basic" type="Human_Resources||Get_Workers" doc:name="get Workers from Workday"/>
+                <dw:transform-message metadata:id="6375a6bc-bec5-493c-b74d-93b0c008cb6a" doc:name="transform Workday's workers to map of values">
+                    <dw:input-payload doc:sample="sample_data\Get_Workers_Response.xml"/>
                     <dw:set-payload><![CDATA[%dw 1.0
 %output application/java
+%namespace ns0 urn:com.workday/bsvc
 ---
-payload.responseData.worker map
-{
-	Id: $.workerReference.ID[1].value,
-	Name: $.workerData.personalData.nameData.legalNameData.nameDetailData.formattedName,
-	Email: $.workerData.personalData.contactData.emailAddressData[-1].emailAddress,
-	Username: $.workerData.userAccountData.userName when $.workerData.userAccountData != null otherwise null
-}]]></dw:set-payload>
+payload.ns0#Get_Workers_Response.ns0#Response_Data.*ns0#Worker map ((worker , indexOfWorker) -> {
+	Id: payload.ns0#Get_Workers_Response.ns0#Response_Data.ns0#Worker.ns0#Worker_Reference.ns0#ID,
+	Name: payload.ns0#Get_Workers_Response.ns0#Response_Data.ns0#Worker.ns0#Worker_Data.ns0#Personal_Data.ns0#Name_Data.ns0#Legal_Name_Data.ns0#Name_Detail_Data.@ns0#Formatted_Name,
+	Email: payload.ns0#Get_Workers_Response.ns0#Response_Data.ns0#Worker.ns0#Worker_Data.ns0#Personal_Data.ns0#Contact_Data.ns0#Email_Address_Data.ns0#Email_Address,
+	Username: payload.ns0#Get_Workers_Response.ns0#Response_Data.ns0#Worker.ns0#Worker_Data.ns0#User_ID
+})]]></dw:set-payload>
                 </dw:transform-message>
             </processor-chain>
             <processor-chain>
@@ -71,7 +78,8 @@ payload.responseData.worker map
 }]]></dw:set-payload>
                 </dw:transform-message>
                 <servicenow:invoke config-ref="ServiceNow" type="sys_user||getRecords" doc:name="get Users from ServiceNow"/>
-                <dw:transform-message doc:name="ServiceNow Users to Maps">
+                <dw:transform-message metadata:id="ef32ce92-ea79-4b35-9f30-1561aa0bed3c" doc:name="ServiceNow Users to Maps">
+                    <dw:input-payload doc:sample="sample_data\getRecordsResponse.xml"/>
                     <dw:set-payload><![CDATA[%dw 1.0
 %output application/java
 %namespace ns0 http://www.service-now.com/sys_user
@@ -89,7 +97,8 @@ payload.ns0#getRecordsResponse.*ns0#getRecordsResult map
     </flow>
     <flow name="formatOutputFlow" processingStrategy="synchronous">
         <custom-transformer class="org.mule.templates.transformers.SortWorkersTransformer" doc:name="Custom component to sort workers list"/>
-        <dw:transform-message doc:name="transform Collection of Maps to CSV Format">
+        <dw:transform-message doc:name="transform Collection of Maps to CSV Format" metadata:id="ff5ba9ff-d2df-466e-afac-2fd2e399270e">
+        	<dw:input-payload doc:sample="sample_data\sorted_Workers.dwl"/>
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/csv header=true, quoteValues=true
 ---

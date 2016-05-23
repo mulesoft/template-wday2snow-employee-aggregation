@@ -115,9 +115,10 @@ In order to use this Mule Anypoint Template you need to configure properties (Cr
 + page.size `200`
 
 #### WorkDay Connector configuration
-+ wday.user `user@mulesoft`
-+ wday.password `secret`
-+ wday.endpoint `https://impl-cc.workday.com/ccx/service/mulesoft/Human_Resources/v23.1`
++ wday.user `joan`
++ wday.tenant `acme_pt1`
++ wday.password `joanPass123`
++ wdayf.hostname `your_impl-cc.workday.com`
 
 #### ServiceNow Connector configuration
 + snow.user `mule.snow`
