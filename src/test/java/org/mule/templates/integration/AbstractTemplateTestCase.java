@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import org.junit.BeforeClass;
 import org.mule.api.config.MuleProperties;
 import org.mule.construct.Flow;
 import org.mule.tck.junit4.FunctionalTestCase;
@@ -23,6 +24,11 @@ public class AbstractTemplateTestCase extends FunctionalTestCase {
 	private static final String MAPPINGS_FOLDER_PATH = "./mappings";
 	private static final String TEST_FLOWS_FOLDER_PATH = "./src/test/resources/flows/";
 	private static final String MULE_DEPLOY_PROPERTIES_PATH = "./src/main/app/mule-deploy.properties";
+	
+	@BeforeClass
+	public static void beforeClass() {
+		System.setProperty("mule.env", "test");
+	}
 
 	@Override
 	protected String getConfigResources() {
