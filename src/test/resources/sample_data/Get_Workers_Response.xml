@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ns0:Get_Workers_Response xmlns:ns0="urn:com.workday/bsvc">
+  <ns0:Response_Data>
+    <ns0:Worker>
+      <ns0:Worker_Reference>
+        <ns0:ID>3aa5550b7fe348b98d7b5741afc123456</ns0:ID>
+      </ns0:Worker_Reference>
+      <ns0:Worker_Data>
+        <ns0:User_ID>lmcneil</ns0:User_ID>
+        <ns0:Personal_Data>
+          <ns0:Name_Data>
+            <ns0:Legal_Name_Data>
+              <ns0:Name_Detail_Data ns0:Formatted_Name="Logan McNeil"/>
+            </ns0:Legal_Name_Data>
+          </ns0:Name_Data>
+          <ns0:Contact_Data>
+            <ns0:Email_Address_Data>
+              <ns0:Email_Address>lmcneil@example.com</ns0:Email_Address>
+            </ns0:Email_Address_Data>
+          </ns0:Contact_Data>
+        </ns0:Personal_Data>
+      </ns0:Worker_Data>
+    </ns0:Worker>
+  </ns0:Response_Data>
+</ns0:Get_Workers_Response>

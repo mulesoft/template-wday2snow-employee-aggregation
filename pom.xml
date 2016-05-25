@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.mule.templates</groupId>
 		<artifactId>templates-tooling-parent-pom</artifactId>
-		<version>1.2.3</version>
+		<version>1.2.12</version>
 	</parent>
 
 	<artifactId>template-wday2snow-employee-aggregation</artifactId>
@@ -22,15 +23,15 @@
 				<configuration>
 					<copyToAppsDirectory>true</copyToAppsDirectory>
 					<inclusions>
-					<inclusion>
-                            <groupId>org.mule.modules</groupId>
-                            <artifactId>mule-module-servicenow</artifactId>
-                        </inclusion>
-                    <inclusion>
-                            <groupId>org.mule.modules</groupId>
-                            <artifactId>mule-module-workday-humanresources</artifactId>
-                        </inclusion>
-                    </inclusions>
+						<inclusion>
+							<groupId>org.mule.modules</groupId>
+							<artifactId>mule-module-servicenow</artifactId>
+						</inclusion>
+						<inclusion>
+							<groupId>org.mule.modules</groupId>
+							<artifactId>workday-connector</artifactId>
+						</inclusion>
+					</inclusions>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -43,29 +44,41 @@
 			<version>${snow.version}</version>
 		</dependency>
 		<dependency>
-           <groupId>org.mule.modules</groupId>
-           <artifactId>mule-module-ws</artifactId>
-           <version>${mule.version}</version>
-           <scope>test</scope>
-       </dependency>
- 	    <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-spring-config</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-workday-humanresources</artifactId>
-            <version>${wday.hr.version}</version>
-        </dependency>
-    <dependency>
-            <groupId>com.mulesoft.weave</groupId>
-            <artifactId>mule-plugin-weave_2.11</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-ws</artifactId>
+			<version>${mule.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-spring-config</artifactId>
+			<version>${mule.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.weave</groupId>
+			<artifactId>mule-plugin-weave_2.11</artifactId>
+			<version>${mule.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>workday-connector</artifactId>
+			<version>${wday.version}</version>
+		</dependency>
+		<dependency>
+ 			<groupId>org.mule.modules</groupId>
+ 			<artifactId>mule-module-http</artifactId>
+ 			<version>${mule.version}</version>
+ 			<scope>provided</scope>
+ 		</dependency>
+ 		<dependency>
+ 			<groupId>org.mule.transports</groupId>
+ 			<artifactId>mule-transport-email</artifactId>
+ 			<version>${mule.version}</version>
+ 			<scope>provided</scope>
+ 		</dependency>
+	</dependencies>
 
 	<repositories>
 		<repository>
@@ -86,11 +99,11 @@
 			<url>https://repository.mulesoft.org/nexus/content/repositories/snapshots/</url>
 			<layout>default</layout>
 		</repository>
-	</repositories>	
+	</repositories>
 	<scm>
 		<connection>scm:git:https://github.com/mulesoft/template-wday2snow-employee-aggregation.git</connection>
 		<developerConnection>scm:git:https://github.com/mulesoft/template-wday2snow-employee-aggregation.git</developerConnection>
 		<url>http://github.com/mulesoft/template-wday2snow-employee-aggregation</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 </project>
