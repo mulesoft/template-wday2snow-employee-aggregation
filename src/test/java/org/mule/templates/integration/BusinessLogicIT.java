@@ -10,10 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mule.api.MuleEvent;
-import org.mule.tck.junit4.rule.DynamicPort;
 
 /**
  * The objective of this class is to validate the correct behavior of the flows for this Mule Template that make calls to external systems.
@@ -23,9 +21,6 @@ import org.mule.tck.junit4.rule.DynamicPort;
 public class BusinessLogicIT extends AbstractTemplateTestCase {
 	
 	protected static final String TEMPLATE_NAME = "worker-aggregation";
-	
-	@Rule
-	public DynamicPort port = new DynamicPort("http.port");
 
 	@Test
 	public void testMainFlow() throws Exception {
