@@ -29,11 +29,6 @@ public class AbstractTemplateTestCase extends FunctionalTestCase {
 	
 	@Rule
 	public DynamicPort port = new DynamicPort("http.port");
-	
-	@BeforeClass
-	public static void beforeClass() {
-		System.setProperty("mule.env", "test");
-	}
 
 	@Override
 	protected String getConfigResources() {
