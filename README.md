@@ -121,7 +121,7 @@ In order to use this Mule Anypoint Template you need to configure properties (Cr
 + wday.username `joan`
 + wday.tenant `acme_pt1`
 + wday.password `joanPass123`
-+ wdayf.hostname `your_impl-cc.workday.com`
++ wday.hostname `your_impl-cc.workday.com`
 
 #### ServiceNow Connector configuration
 + snow.user `mule.snow`

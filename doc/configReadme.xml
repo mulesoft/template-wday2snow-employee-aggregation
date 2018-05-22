@@ -42,7 +42,7 @@ After this, to trigger the use case you just need to hit the local http endpoint
 + wday.username `joan`
 + wday.tenant `acme_pt1`
 + wday.password `joanPass123`
-+ wdayf.hostname `your_impl-cc.workday.com`
++ wday.hostname `your_impl-cc.workday.com`
 
 #### ServiceNow Connector configuration
 + snow.user `mule.snow`
