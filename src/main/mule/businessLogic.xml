@@ -35,7 +35,7 @@ ns ns0 urn:com.workday/bsvc
 					</ee:message>
 				</ee:transform>
 				<workday:human-resources operation="Get_Workers" doc:name="Get workers from Workday" doc:id="81dffae2-1238-4475-a7a2-f3d49e8d7d27" config-ref="Workday_Config_version_30" />
-				<ee:transform doc:name="Transform Workday response" doc:id="f2114fbc-b82d-48ed-be3b-980252e6f446">
+				<ee:transform doc:name="Prepare Workday data to aggregation" doc:id="f2114fbc-b82d-48ed-be3b-980252e6f446">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/java
@@ -65,7 +65,7 @@ ns ns0 http://www.service-now.com/sys_user
 					</ee:message>
 				</ee:transform>
 				<servicenow:invoke operation="getRecords" doc:name="get Users from ServiceNow" doc:id="46588e07-eb34-4797-914b-b58f6fb68217" config-ref="ServiceNow_Config" service="sys_user" />
-				<ee:transform doc:name="ServiceNow Users to Maps" doc:id="436ffaba-3608-4dae-9059-f818d3c11f6f">
+				<ee:transform doc:name="Prepare ServiceNow data to aggregation" doc:id="436ffaba-3608-4dae-9059-f818d3c11f6f">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/java

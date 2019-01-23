@@ -29,8 +29,8 @@ payload]]></ee:set-payload>
 			</ee:transform>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-that doc:name="Assert that first record from Workday" doc:id="3fb983d7-dd9b-48fa-9aec-8309330f8a99" expression="#[payload[0].IDInWorkday]" is="#[MunitTools::not(MunitTools::isEmptyString())]"/>
-			<munit-tools:assert-that doc:name="Assert that last record from ServiceNow" doc:id="42991255-c4d4-4eaf-84eb-d07f7941cf5b" expression="#[payload[sizeOf(payload) -1].IDInServiceNow]" is="#[MunitTools::not(MunitTools::isEmptyString())]"/>
+			<munit-tools:assert-that doc:name="Assert that first record from Workday" doc:id="3fb983d7-dd9b-48fa-9aec-8309330f8a99" expression="#[payload[0].IDInWorkday]" is="#[MunitTools::not(MunitTools::isEmptyString())]" message="First record should be from Workday"/>
+			<munit-tools:assert-that doc:name="Assert that last record from ServiceNow" doc:id="42991255-c4d4-4eaf-84eb-d07f7941cf5b" expression="#[payload[sizeOf(payload) -1].IDInServiceNow]" is="#[MunitTools::not(MunitTools::isEmptyString())]" message="Last record should be from ServiceNow"/>
 			<munit-tools:verify-call doc:name="Verify Workday call" doc:id="8cea3a88-600e-4dde-9e0d-2d6f71080477" processor="workday:human-resources" times="1"/>
 			<munit-tools:verify-call doc:name="Verify ServiceNow call" doc:id="26fc3872-e9e4-4f24-8d22-8eea33e1ad96" processor="servicenow:invoke" times="1"/>
 		</munit:validation>
