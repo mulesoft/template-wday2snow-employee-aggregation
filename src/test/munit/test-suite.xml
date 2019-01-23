@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+    xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation=" 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+        
+    <munit:config name="test-suite.xml" />
+
+    <configuration-properties doc:name="Configuration properties" doc:id="0aabbbbc-71e0-4f0b-a513-0222c6b94784" file="mule.test.properties" />
+    <munit:before-test name="test-suite-Before_Test" description="Before tests actions" doc:id="79b4aa9c-a0b0-4569-96c9-ce1486bea5c7">
+		<munit-tools:mock-when doc:name="Mock email processor to avoid sending email" doc:id="31e20fec-987b-4c83-8537-004dbf75d389" processor="email:send">
+            <munit-tools:then-return />
+        </munit-tools:mock-when>
+    </munit:before-test>
+    <munit:test name="test-suite-businessLogicFlowTest" description="Test" doc:id="ce25e91c-f4d2-4c78-8305-bba59e8398c2">
+        <munit:execution >
+			<flow-ref doc:name="Call businesslogicFlow" doc:id="67de3d8c-9de3-43a3-9bd0-2eb58b9426fb" name="businesslogicFlow"/>
+			<ee:transform doc:name="Transform CSV to JAVA" doc:id="c4a7d4bb-9655-4ea4-932b-0462a8ebcb80" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that first record from Workday" doc:id="3fb983d7-dd9b-48fa-9aec-8309330f8a99" expression="#[payload[0].IDInWorkday]" is="#[MunitTools::not(MunitTools::isEmptyString())]" message="First record should be from Workday"/>
+			<munit-tools:assert-that doc:name="Assert that last record from ServiceNow" doc:id="42991255-c4d4-4eaf-84eb-d07f7941cf5b" expression="#[payload[sizeOf(payload) -1].IDInServiceNow]" is="#[MunitTools::not(MunitTools::isEmptyString())]" message="Last record should be from ServiceNow"/>
+			<munit-tools:verify-call doc:name="Verify Workday call" doc:id="8cea3a88-600e-4dde-9e0d-2d6f71080477" processor="workday:human-resources" times="1"/>
+			<munit-tools:verify-call doc:name="Verify ServiceNow call" doc:id="26fc3872-e9e4-4f24-8d22-8eea33e1ad96" processor="servicenow:invoke" times="1"/>
+		</munit:validation>
+    </munit:test>
+</mule>
