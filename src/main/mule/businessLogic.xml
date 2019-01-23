@@ -11,10 +11,10 @@ http://www.mulesoft.org/schema/mule/servicenow http://www.mulesoft.org/schema/mu
 http://www.mulesoft.org/schema/mule/workday http://www.mulesoft.org/schema/mule/workday/current/mule-workday.xsd">
     <flow name="businesslogicFlow">
         <scatter-gather doc:name="Scatter-Gather">
-            <route>
-				  <ee:transform doc:name="Prepare Get Workers request" doc:id="5ddb1536-1e04-4131-b020-a946b4d430b1" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+			<route >
+				<ee:transform doc:name="Prepare Get Workers request" doc:id="5ddb1536-1e04-4131-b020-a946b4d430b1">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/xml
 ns ns0 urn:com.workday/bsvc
 ---
@@ -34,14 +34,14 @@ ns ns0 urn:com.workday/bsvc
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<workday:invoke doc:name="Get workers from Workday" doc:id="b03873c0-535e-43f4-8db6-4975f5867403" config-ref="Workday_Config" service="Human_Resources" operation="Get_Workers"/>
-				<ee:transform doc:name="Transform Workday response" doc:id="f2114fbc-b82d-48ed-be3b-980252e6f446" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+				<workday:human-resources operation="Get_Workers" doc:name="Get workers from Workday" doc:id="81dffae2-1238-4475-a7a2-f3d49e8d7d27" config-ref="Workday_Config_version_30" />
+				<ee:transform doc:name="Transform Workday response" doc:id="f2114fbc-b82d-48ed-be3b-980252e6f446">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/java
 ns ns0 urn:com.workday/bsvc
 ---
-payload.body.ns0#Get_Workers_Response.ns0#Response_Data.*ns0#Worker map ((worker , indexOfWorker) -> {
+payload.ns0#Get_Workers_Response.ns0#Response_Data.*ns0#Worker map ((worker , indexOfWorker) -> {
 	Id: worker.ns0#Worker_Reference.ns0#ID,
 	Name: worker.ns0#Worker_Data.ns0#Personal_Data.ns0#Name_Data.ns0#Legal_Name_Data.ns0#Name_Detail_Data.@ns0#Formatted_Name,
 	Email: worker.ns0#Worker_Data.ns0#Personal_Data.ns0#Contact_Data.ns0#Email_Address_Data.ns0#Email_Address,
@@ -49,11 +49,11 @@ payload.body.ns0#Get_Workers_Response.ns0#Response_Data.*ns0#Worker map ((worker
 })]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-            </route>
-            <route>
-				<ee:transform doc:name="Create getRecords Request" doc:id="0543e742-d7aa-424c-a7d7-f2e8d7667e12" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+			</route>
+			<route >
+				<ee:transform doc:name="Create getRecords Request" doc:id="0543e742-d7aa-424c-a7d7-f2e8d7667e12">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/xml
 ns ns0 http://www.service-now.com/sys_user
 ---
@@ -64,10 +64,10 @@ ns ns0 http://www.service-now.com/sys_user
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<servicenow:invoke operation="getRecords" doc:name="get Users from ServiceNow" doc:id="46588e07-eb34-4797-914b-b58f6fb68217" config-ref="ServiceNow_Config" service="sys_user"/>
-				<ee:transform doc:name="ServiceNow Users to Maps" doc:id="436ffaba-3608-4dae-9059-f818d3c11f6f" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+				<servicenow:invoke operation="getRecords" doc:name="get Users from ServiceNow" doc:id="46588e07-eb34-4797-914b-b58f6fb68217" config-ref="ServiceNow_Config" service="sys_user" />
+				<ee:transform doc:name="ServiceNow Users to Maps" doc:id="436ffaba-3608-4dae-9059-f818d3c11f6f">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/java
 ---
 payload.body.getRecordsResponse.*getRecordsResult map {
@@ -78,7 +78,7 @@ payload.body.getRecordsResponse.*getRecordsResult map {
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-            </route>
+			</route>
         </scatter-gather>
         <ee:transform doc:name="Aggregate results and transform to CSV" doc:id="4b662e7a-dbb3-43d0-ac7a-86d969e38be8">
             <ee:message>
@@ -139,7 +139,7 @@ sortBySourceExistence(mergedItems) map (item) -> {
 
         </email:send>
 	</flow>
-    <flow name="mainFlow">
+	<flow name="mainFlow">
         <flow-ref doc:name="Call businesslogicFlow" name="businesslogicFlow"/>
         <error-handler>
             <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" type="ANY">
