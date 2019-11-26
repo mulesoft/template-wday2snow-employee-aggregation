@@ -10,6 +10,7 @@ http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/em
 http://www.mulesoft.org/schema/mule/servicenow http://www.mulesoft.org/schema/mule/servicenow/current/mule-servicenow.xsd
 http://www.mulesoft.org/schema/mule/workday http://www.mulesoft.org/schema/mule/workday/current/mule-workday.xsd">
     <flow name="businesslogicFlow">
+        <set-payload value="[]" doc:name="Set Payload to avoid issue with scatter-gather" doc:id="e92bc13f-0e3e-4ec1-b744-4231aee4e4a9" />
         <scatter-gather doc:name="Scatter-Gather">
 			<route >
 				<ee:transform doc:name="Prepare Get Workers request" doc:id="5ddb1536-1e04-4131-b020-a946b4d430b1">
@@ -34,7 +35,7 @@ ns ns0 urn:com.workday/bsvc
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<workday:human-resources operation="Get_Workers" doc:name="Get workers from Workday" doc:id="81dffae2-1238-4475-a7a2-f3d49e8d7d27" config-ref="Workday_Config_version_30" />
+				<workday:human-resources operation="Get_Workers" doc:name="Get workers from Workday" doc:id="81dffae2-1238-4475-a7a2-f3d49e8d7d27" config-ref="Workday_Config" />
 				<ee:transform doc:name="Prepare Workday data to aggregation" doc:id="f2114fbc-b82d-48ed-be3b-980252e6f446">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
